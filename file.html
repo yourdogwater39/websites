@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NovaOS</title>
+<style>
+  :root {
+    --bg: #070b16;
+    --glass: rgba(12, 18, 36, 0.72);
+    --line: rgba(255,255,255,0.12);
+    --text: #eef3ff;
+    --muted: #9aa8c7;
+    --accent: #f0a202;
+    --accent-2: #7aa2ff;
+    --danger: #ff5d73;
+    --shadow: 0 18px 50px rgba(0,0,0,0.45);
+    --radius: 16px;
+    --font: "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; font-family: var(--font); color: var(--text); background: var(--bg); }
+  button, input, select, textarea { font-family: inherit; color: inherit; }
+  button { cursor: pointer; }
+
+  #desktop {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(900px 500px at 15% 20%, rgba(240,162,2,0.18), transparent 60%),
+      radial-gradient(700px 500px at 85% 10%, rgba(90,130,255,0.22), transparent 55%),
+      radial-gradient(600px 400px at 70% 80%, rgba(255,80,120,0.12), transparent 50%),
+      linear-gradient(160deg, #050814, #10182e 45%, #1a1030);
+  }
+  #stars { position: absolute; inset: 0; pointer-events: none; }
+
+  #icons {
+    position: absolute; top: 22px; left: 18px;
+    display: flex; flex-direction: column; gap: 8px; z-index: 2;
+  }
+  .icon {
+    width: 92px; border: 0; background: transparent; color: var(--text);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 8px 4px; border-radius: 12px;
+  }
+  .icon:hover, .icon:focus-visible { background: rgba(255,255,255,0.08); outline: none; }
+  .glyph {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: grid; place-items: center; font-weight: 800; font-size: 16px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), 0 8px 18px rgba(0,0,0,0.25);
+  }
+  .icon span { font-size: 12px; text-shadow: 0 1px 4px #000; text-align: center; }
+
+  #windows { position: absolute; inset: 0 0 56px 0; z-index: 5; pointer-events: none; }
+  .win {
+    position: absolute; width: min(760px, calc(100vw - 40px)); height: min(520px, calc(100vh - 110px));
+    background: var(--glass); backdrop-filter: blur(16px);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); display: flex; flex-direction: column;
+    pointer-events: auto; overflow: hidden; min-width: 320px; min-height: 220px;
+  }
+  .win.max { inset: 10px 10px 10px 10px; width: auto; height: auto; border-radius: 12px; }
+  .titlebar {
+    height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 10px;
+    background: rgba(255,255,255,0.04); cursor: grab; user-select: none;
+  }
+  .titlebar b { font-size: 13px; font-weight: 650; }
+  .titlebar .sp { flex: 1; }
+  .tb {
+    width: 28px; height: 22px; border: 0; border-radius: 7px; background: rgba(255,255,255,0.08); color: var(--text);
+  }
+  .tb.close { background: rgba(255,93,115,0.25); }
+  .body { flex: 1; overflow: auto; padding: 16px; }
+  .hidden { display: none !important; }
+
+  #taskbar {
+    position: fixed; left: 10px; right: 10px; bottom: 8px; height: 48px; z-index: 20;
+    display: flex; align-items: center; gap: 8px; padding: 0 8px;
+    background: rgba(8,12,24,0.78); border: 1px solid var(--line);
+    border-radius: 16px; backdrop-filter: blur(18px);
+  }
+  #start {
+    border: 0; height: 34px; padding: 0 12px; border-radius: 10px;
+    background: linear-gradient(180deg, #ffc14a, var(--accent)); color: #1a1200; font-weight: 800;
+  }
+  #tasks { display: flex; gap: 6px; flex: 1; min-width: 0; overflow: auto; }
+  .task {
+    border: 0; height: 32px; max-width: 180px; padding: 0 10px; border-radius: 9px;
+    background: rgba(255,255,255,0.08); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .task.on { box-shadow: inset 0 -2px 0 var(--accent); }
+  #clock { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); padding-right: 6px; text-align: right; }
+
+  #menu {
+    position: fixed; left: 12px; bottom: 66px; width: 280px; z-index: 30;
+    background: rgba(10,14,28,0.92); border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow); padding: 12px; backdrop-filter: blur(16px);
+  }
+  #menu h1 { margin: 4px 8px 10px; font-size: 18px; }
+  #menu h1 small { display: block; color: var(--muted); font-size: 12px; font-weight: 500; }
+  .m-item {
+    width: 100%; text-align: left; border: 0; background: transparent; color: var(--text);
+    padding: 9px 10px; border-radius: 10px; display: flex; gap: 8px; align-items: center;
+  }
+  .m-item:hover { background: rgba(255,255,255,0.08); }
+
+  .search-row { display: flex; gap: 8px; }
+  .search-row input, .field, select, textarea {
+    width: 100%; border: 1px solid var(--line); background: rgba(0,0,0,0.28);
+    border-radius: 10px; padding: 10px 12px; outline: none;
+  }
+  .search-row input:focus, .field:focus, textarea:focus { border-color: var(--accent); }
+  .go {
+    border: 0; border-radius: 10px; padding: 0 16px; font-weight: 750;
+    background: var(--accent); color: #1a1200; white-space: nowrap;
+  }
+  .engines { display: flex; gap: 8px; margin: 12px 0; }
+  .chip {
+    border: 1px solid var(--line); background: transparent; color: var(--text);
+    border-radius: 999px; padding: 6px 12px;
+  }
+  .chip.on { background: rgba(240,162,2,0.2); border-color: var(--accent); }
+  .hint { color: var(--muted); font-size: 13px; line-height: 1.45; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .card {
+    text-align: left; border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+    border-radius: 12px; padding: 12px;
+  }
+  .card b { display: block; margin-bottom: 4px; }
+  textarea { min-height: 240px; resize: vertical; }
+  label.row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 10px 0; font-size: 14px; }
+
+  #boot {
+    position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+    background: radial-gradient(circle at 50% 40%, #1a2748, #050814 70%);
+  }
+  .logo {
+    width: 84px; height: 84px; margin: 0 auto 14px; border-radius: 24px;
+    display: grid; place-items: center; font-size: 28px; font-weight: 900; color: #1a1200;
+    background: linear-gradient(160deg, #ffe08a, var(--accent));
+    box-shadow: 0 0 40px rgba(240,162,2,0.45);
+  }
+  #boot h2 { margin: 0; text-align: center; letter-spacing: 0.12em; }
+  #boot p { text-align: center; color: var(--muted); }
+  .bar { width: 220px; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.1); overflow: hidden; margin: 8px auto 0; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); animation: load 1.1s ease forwards; }
+  @keyframes load { to { width: 100%; } }
+</style>
+</head>
+<body>
+<div id="desktop">
+  <canvas id="stars"></canvas>
+  <div id="icons"></div>
+  <div id="windows"></div>
+</div>
+
+<div id="taskbar">
+  <button id="start" type="button">Nova</button>
+  <div id="tasks"></div>
+  <div id="clock"></div>
+</div>
+
+<div id="menu" class="hidden"></div>
+
+<div id="boot">
+  <div>
+    <div class="logo">N</div>
+    <h2>NOVAOS</h2>
+    <p>starting workspace</p>
+    <div class="bar"><i></i></div>
+  </div>
+</div>
+
+<script>
+const APPS = {
+  browser: { name: "Nova Search", glyph: "Ns", color: "linear-gradient(160deg,#7aa2ff,#3558d6)" },
+  google: { name: "Google", glyph: "G", color: "linear-gradient(160deg,#7dbaff,#1a73e8)" },
+  ddg: { name: "DuckDuckGo", glyph: "Dd", color: "linear-gradient(160deg,#de5833,#a33b1f)" },
+  notes: { name: "Notes", glyph: "Nt", color: "linear-gradient(160deg,#f0c14a,#c4840a)" },
+  settings: { name: "Settings", glyph: "St", color: "linear-gradient(160deg,#b9c4de,#5c6b8a)" },
+  about: { name: "About", glyph: "?", color: "linear-gradient(160deg,#d7b4ff,#7a4dff)" }
+};
+
+const desktop = document.getElementById("desktop");
+const iconsEl = document.getElementById("icons");
+const windowsEl = document.getElementById("windows");
+const tasksEl = document.getElementById("tasks");
+const menuEl = document.getElementById("menu");
+let z = 10;
+let notes = localStorage.getItem("nova-notes") || "";
+
+function stars() {
+  const c = document.getElementById("stars");
+  const ctx = c.getContext("2d");
+  function draw() {
+    c.width = innerWidth; c.height = innerHeight;
+    ctx.clearRect(0, 0, c.width, c.height);
+    for (let i = 0; i < 90; i++) {
+      const x = (i * 97) % c.width, y = (i * 53) % c.height;
+      ctx.fillStyle = `rgba(255,255,255,${0.25 + (i % 5) * 0.12})`;
+      ctx.fillRect(x, y, i % 7 === 0 ? 2 : 1, i % 7 === 0 ? 2 : 1);
+    }
+  }
+  draw();
+  addEventListener("resize", draw);
+}
+stars();
+
+function paintIcons() {
+  iconsEl.innerHTML = "";
+  Object.keys(APPS).forEach(id => {
+    const a = APPS[id];
+    const b = document.createElement("button");
+    b.className = "icon";
+    b.innerHTML = `<div class="glyph" style="background:${a.color}">${a.glyph}</div><span>${a.name}</span>`;
+    b.onclick = () => openApp(id);
+    iconsEl.appendChild(b);
+  });
+}
+paintIcons();
+
+function tick() {
+  const d = new Date();
+  document.getElementById("clock").textContent =
+    d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) +
+    "\n" + d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+}
+tick(); setInterval(tick, 10000);
+
+function openMenu() {
+  menuEl.classList.toggle("hidden");
+  if (menuEl.classList.contains("hidden")) return;
+  menuEl.innerHTML = `<h1>NovaOS<small>search stays in this Chromebook tab</small></h1>` +
+    Object.keys(APPS).map(id => `<button class="m-item" data-id="${id}"><b style="width:22px">${APPS[id].glyph}</b> ${APPS[id].name}</button>`).join("") +
+    `<button class="m-item" id="lock">Lock screen</button>`;
+  menuEl.querySelectorAll("[data-id]").forEach(b => b.onclick = () => { openApp(b.dataset.id); menuEl.classList.add("hidden"); });
+  menuEl.querySelector("#lock").onclick = () => { menuEl.classList.add("hidden"); document.getElementById("boot").classList.remove("hidden"); setTimeout(() => document.getElementById("boot").classList.add("hidden"), 900); };
+}
+document.getElementById("start").onclick = (e) => { e.stopPropagation(); openMenu(); };
+document.addEventListener("click", (e) => {
+  if (!menuEl.contains(e.target) && e.target.id !== "start") menuEl.classList.add("hidden");
+});
+
+function searchUrl(engine, q) {
+  const query = encodeURIComponent(q.trim());
+  if (engine === "google") return "[google.com](https://www.google.com/search?q=)" + query;
+  return "[duckduckgo.com](https://duckduckgo.com/?q=)" + query;
+}
+
+function runSearch(engine, q) {
+  if (!q.trim()) return;
+  window.open(searchUrl(engine, q), "nova-" + engine);
+}
+
+function openApp(id) {
+  const existing = document.querySelector(`.win[data-app="${id}"]`);
+  if (existing) { focusWin(existing); existing.classList.remove("hidden"); refreshTasks(); return; }
+  const win = document.createElement("section");
+  win.className = "win";
+  win.dataset.app = id;
+  win.style.left = (70 + (z % 6) * 26) + "px";
+  win.style.top = (36 + (z % 5) * 22) + "px";
+  win.innerHTML = `
+    <div class="titlebar">
+      <b>${APPS[id].name}</b>
+      <div class="sp"></div>
+      <button class="tb" data-act="min" type="button">–</button>
+      <button class="tb" data-act="max" type="button">□</button>
+      <button class="tb close" data-act="close" type="button">×</button>
+    </div>
+    <div class="body"></div>`;
+  win.querySelector(".body").appendChild(appBody(id));
+  windowsEl.appendChild(win);
+  focusWin(win);
+  bindWindow(win);
+  refreshTasks();
+}
+
+function appBody(id) {
+  const wrap = document.createElement("div");
+  if (id === "google" || id === "ddg" || id === "browser") {
+    const engine = id === "google" ? "google" : "ddg";
+    wrap.innerHTML = `
+      <p class="hint">Type a search. Results open in a second tab so this NovaOS tab stays open. School networks block Google and DuckDuckGo inside a frame, so a real search tab is the version that works.</p>
+      <div class="engines">
+        <button class="chip ${engine === "google" ? "on" : ""}" data-eng="google" type="button">Google</button>
+        <button class="chip ${engine === "ddg" ? "on" : ""}" data-eng="ddg" type="button">DuckDuckGo</button>
+      </div>
+      <form class="search-row">
+        <input name="q" placeholder="Search the web" autocomplete="off">
+        <button class="go" type="submit">Search</button>
+      </form>
+      <div class="cards">
+        <button class="card" type="button" data-q="weather"><b>Weather</b><span class="hint">today's forecast</span></button>
+        <button class="card" type="button" data-q="news"><b>News</b><span class="hint">what is happening</span></button>
+        <button class="card" type="button" data-q="define algorithm"><b>Define</b><span class="hint">algorithm</span></button>
+        <button class="card" type="button" data-q="homework timer"><b>Homework timer</b><span class="hint">focus ideas</span></button>
+      </div>`;
+    let eng = engine;
+    wrap.querySelectorAll("[data-eng]").forEach(c => c.onclick = () => {
+      eng = c.dataset.eng;
+      wrap.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c));
+    });
+    const go = (q) => runSearch(eng, q);
+    wrap.querySelector("form").onsubmit = (e) => { e.preventDefault(); go(wrap.querySelector("input").value); };
+    wrap.querySelectorAll("[data-q]").forEach(c => c.onclick = () => go(c.dataset.q));
+    return wrap;
+  }
+  if (id === "notes") {
+    wrap.innerHTML = `<p class="hint">Saved in this browser only. Clearing site data deletes it.</p><textarea></textarea>`;
+    const t = wrap.querySelector("textarea");
+    t.value = notes;
+    t.oninput = () => { notes = t.value; localStorage.setItem("nova-notes", notes); };
+    return wrap;
+  }
+  if (id === "settings") {
+    wrap.innerHTML = `
+      <label class="row">Accent <input id="accent" type="color" value="#f0a202"></label>
+      <label class="row">Wallpaper
+        <select id="wall">
+          <option value="nova">Nova</option>
+          <option value="night">Night</option>
+          <option value="dawn">Dawn</option>
+        </select>
+      </label>
+      <p class="hint">Looks stay on this device. Nothing is uploaded.</p>`;
+    wrap.querySelector("#accent").oninput = (e) => document.documentElement.style.setProperty("--accent", e.target.value);
+    wrap.querySelector("#wall").onchange = (e) => {
+      const map = {
+        nova: "radial-gradient(900px 500px at 15% 20%, rgba(240,162,2,0.18), transparent 60%), radial-gradient(700px 500px at 85% 10%, rgba(90,130,255,0.22), transparent 55%), linear-gradient(160deg, #050814, #10182e 45%, #1a1030)",
+        night: "linear-gradient(180deg, #02040a, #0b1020 60%, #111827)",
+        dawn: "linear-gradient(160deg, #1b1230, #6a3a55 50%, #e0a15a)"
+      };
+      desktop.style.background = map[e.target.value];
+    };
+    return wrap;
+  }
+  wrap.innerHTML = `<h2 style="margin-top:0">NovaOS</h2>
+    <p class="hint">A tab desktop for a school Chromebook. It is not the device operating system and cannot change ChromeOS settings, install apps, or bypass school filters.</p>
+    <p class="hint">Google and DuckDuckGo run as normal searches in another tab. Use Nova Search, Google, or DuckDuckGo on the desktop.</p>`;
+  return wrap;
+}
+
+function focusWin(win) {
+  z += 1; win.style.zIndex = z;
+  document.querySelectorAll(".win").forEach(w => w.style.outline = "none");
+  refreshTasks();
+}
+function refreshTasks() {
+  tasksEl.innerHTML = "";
+  document.querySelectorAll(".win").forEach(w => {
+    const b = document.createElement("button");
+    b.className = "task" + (w.style.zIndex == z && !w.classList.contains("hidden") ? " on" : "");
+    b.textContent = APPS[w.dataset.app].name;
+    b.onclick = () => {
+      if (w.classList.contains("hidden")) w.classList.remove("hidden");
+      focusWin(w);
+    };
+    tasksEl.appendChild(b);
+  });
+}
+function bindWindow(win) {
+  const bar = win.querySelector(".titlebar");
+  bar.onmousedown = (e) => {
+    if (e.target.closest("button") || win.classList.contains("max")) return;
+    focusWin(win);
+    const sx = e.clientX, sy = e.clientY;
+    const sl = win.offsetLeft, st = win.offsetTop;
+    function move(ev) {
+      win.style.left = Math.max(0, sl + ev.clientX - sx) + "px";
+      win.style.top = Math.max(0, st + ev.clientY - sy) + "px";
+    }
+    function up() { removeEventListener("mousemove", move); removeEventListener("mouseup", up); }
+    addEventListener("mousemove", move);
+    addEventListener("mouseup", up);
+  };
+  win.onmousedown = () => focusWin(win);
+  win.querySelectorAll(".tb").forEach(btn => btn.onclick = () => {
+    const act = btn.dataset.act;
+    if (act === "close") { win.remove(); refreshTasks(); }
+    if (act === "min") { win.classList.add("hidden"); refreshTasks(); }
+    if (act === "max") win.classList.toggle("max");
+  });
+}
+
+setTimeout(() => document.getElementById("boot").classList.add("hidden"), 1200);
+openApp("browser");
+</script>
+</body>
+</html>
