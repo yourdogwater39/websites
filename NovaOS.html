@@ -74,9 +74,9 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -53%);
-      width: 780px;
+      width: 800px;
       max-width: 96vw;
-      height: 620px;
+      height: 640px;
       max-height: 92vh;
       background: #f3f3f3;
       border-radius: 12px;
@@ -157,7 +157,6 @@
     .tab {
       display: flex;
       align-items: center;
-      gap: 8px;
       height: 32px;
       padding: 0 14px;
       background: #dcdcdc;
@@ -185,6 +184,7 @@
     .panel {
       display: none;
       padding: 24px 28px 30px;
+      height: 100%;
     }
 
     .panel.active { display: block; }
@@ -319,6 +319,34 @@
       border-color: #e6e200;
       color: #000;
       font-weight: 600;
+    }
+
+    /* Results panel */
+    .results-box {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .results-query {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .results-engine {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     .note-form {
@@ -477,14 +505,15 @@
     <div class="tab-bar">
       <div class="tab active" data-panel="web" onclick="switchPanel('web')">Web Search</div>
       <div class="tab" data-panel="local" onclick="switchPanel('local')">Local Search</div>
+      <div class="tab" data-panel="results" onclick="switchPanel('results')" id="resultsTab" style="display:none;">Results</div>
     </div>
 
     <div class="content-area">
-      <!-- WEB SEARCH PANEL -->
+      <!-- WEB SEARCH -->
       <div class="panel active" id="panel-web">
         <div class="header">
           <h1>NovaOS</h1>
-          <p>Google & DuckDuckGo</p>
+          <p>Search stays inside the window</p>
         </div>
 
         <div class="search-group">
@@ -507,7 +536,6 @@
 
         <div class="apps-section">
           <h2>Quick Links</h2>
-          <p>Opens in the same tab</p>
           <div class="apps-grid">
             <button class="app-btn snapchat" onclick="goTo('https://web.snapchat.com/')">Snapchat</button>
             <button class="app-btn" onclick="goTo('https://www.youtube.com/')">YouTube</button>
@@ -515,11 +543,11 @@
         </div>
       </div>
 
-      <!-- LOCAL SEARCH PANEL -->
+      <!-- LOCAL SEARCH -->
       <div class="panel" id="panel-local">
         <div class="header">
           <h1>Local Search</h1>
-          <p>Your notes • Works offline</p>
+          <p>Your notes • Fully inside the window</p>
         </div>
 
         <div class="note-form">
@@ -540,6 +568,28 @@
         <div class="results-info" id="localStats"></div>
         <div id="localResults"></div>
       </div>
+
+      <!-- RESULTS PANEL (stays inside the window) -->
+      <div class="panel" id="panel-results">
+        <div class="header">
+          <h1>Search Results</h1>
+          <p>Results are shown inside NovaOS</p>
+        </div>
+
+        <div class="results-box">
+          <div class="results-query" id="resultsQuery">—</div>
+          <div class="results-engine" id="resultsEngine">—</div>
+          <p style="font-size:14px;color:#555;margin-bottom:20px;line-height:1.5;">
+            Real web results cannot be loaded inside a local HTML page<br>
+            because of browser security rules.<br><br>
+            You can open the results in the same tab when you’re ready.
+          </p>
+          <div class="results-actions">
+            <button class="btn btn-google" id="openResultsBtn" onclick="openCurrentResults()">Open Results</button>
+            <button class="btn btn-secondary" onclick="switchPanel('web')">Back to Search</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -558,59 +608,66 @@
   </div>
 
   <script>
-    // ========== SAFE STORAGE (fixes the SecurityError) ==========
-    const memoryStore = {}; // fallback when localStorage is blocked
-
+    // ========== SAFE STORAGE ==========
+    const memoryStore = {};
     function canUseLocalStorage() {
       try {
-        const key = '__test__';
-        localStorage.setItem(key, '1');
-        localStorage.removeItem(key);
+        localStorage.setItem('__t', '1');
+        localStorage.removeItem('__t');
         return true;
-      } catch (e) {
-        return false;
-      }
+      } catch (e) { return false; }
     }
-
-    const useLocalStorage = canUseLocalStorage();
+    const useLS = canUseLocalStorage();
 
     function loadNotes() {
-      if (useLocalStorage) {
-        try {
-          return JSON.parse(localStorage.getItem('novaNotes') || '[]');
-        } catch (e) {
-          return [];
-        }
+      if (useLS) {
+        try { return JSON.parse(localStorage.getItem('novaNotes') || '[]'); }
+        catch (e) { return []; }
       }
       return memoryStore.notes || [];
     }
 
     function saveNotes(notes) {
-      if (useLocalStorage) {
-        try {
-          localStorage.setItem('novaNotes', JSON.stringify(notes));
-        } catch (e) {
-          // ignore
-        }
+      if (useLS) {
+        try { localStorage.setItem('novaNotes', JSON.stringify(notes)); } catch (e) {}
       } else {
         memoryStore.notes = notes;
       }
     }
 
-    // ========== WEB SEARCH ==========
-    function goTo(url) {
-      if (!url.startsWith('http')) url = 'https://' + url;
-      window.location.href = url;
-    }
+    // ========== WEB SEARCH (stays inside window) ==========
+    let currentResultsUrl = '';
 
     function searchGoogle() {
       const q = document.getElementById('google').value.trim();
-      if (q) goTo('https://www.google.com/search?q=' + encodeURIComponent(q));
+      if (!q) return;
+      currentResultsUrl = 'https://www.google.com/search?q=' + encodeURIComponent(q);
+      showResults(q, 'Google');
     }
 
     function searchDDG() {
       const q = document.getElementById('ddg').value.trim();
-      if (q) goTo('https://duckduckgo.com/?q=' + encodeURIComponent(q));
+      if (!q) return;
+      currentResultsUrl = 'https://duckduckgo.com/?q=' + encodeURIComponent(q);
+      showResults(q, 'DuckDuckGo');
+    }
+
+    function showResults(query, engine) {
+      document.getElementById('resultsQuery').textContent = '"' + query + '"';
+      document.getElementById('resultsEngine').textContent = 'Engine: ' + engine;
+      document.getElementById('resultsTab').style.display = 'flex';
+      switchPanel('results');
+    }
+
+    function openCurrentResults() {
+      if (currentResultsUrl) {
+        window.location.href = currentResultsUrl;
+      }
+    }
+
+    function goTo(url) {
+      if (!url.startsWith('http')) url = 'https://' + url;
+      window.location.href = url;
     }
 
     // ========== LOCAL SEARCH ==========
@@ -653,9 +710,7 @@
 
       let matches = notes;
       if (query) {
-        matches = notes.filter(n =>
-          (n.title + ' ' + n.body).toLowerCase().includes(query)
-        );
+        matches = notes.filter(n => (n.title + ' ' + n.body).toLowerCase().includes(query));
       }
 
       statsEl.textContent = query
@@ -700,7 +755,8 @@
     function switchPanel(name) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      document.querySelector(`.tab[data-panel="${name}"]`).classList.add('active');
+      const tab = document.querySelector(`.tab[data-panel="${name}"]`);
+      if (tab) tab.classList.add('active');
       document.getElementById('panel-' + name).classList.add('active');
       if (name === 'local') localSearch();
     }
