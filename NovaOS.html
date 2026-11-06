@@ -303,7 +303,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 40px;
+      height: 42px;
       background: #fff;
       border: 1px solid #e0e0e0;
       border-radius: 7px;
@@ -311,9 +311,11 @@
       font-size: 13.5px;
       font-weight: 500;
       cursor: pointer;
+      transition: all 0.15s;
     }
 
-    .app-btn:hover { background: #f1f1f1; }
+    .app-btn:hover { background: #f1f1f1; border-color: #c8c8c8; }
+
     .app-btn.snapchat {
       background: #fffc00;
       border-color: #e6e200;
@@ -321,32 +323,15 @@
       font-weight: 600;
     }
 
-    /* Results panel */
-    .results-box {
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .results-query {
-      font-size: 18px;
+    .app-btn.gfn {
+      background: linear-gradient(135deg, #76b900, #5a8f00);
+      border-color: #5a8f00;
+      color: white;
       font-weight: 600;
-      margin-bottom: 8px;
     }
 
-    .results-engine {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .results-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
+    .app-btn.gfn:hover {
+      background: linear-gradient(135deg, #85d000, #6aa300);
     }
 
     .note-form {
@@ -411,6 +396,33 @@
       color: #888;
       padding: 30px 10px;
       font-size: 14px;
+    }
+
+    .results-box {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .results-query {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .results-engine {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     .taskbar {
@@ -513,7 +525,7 @@
       <div class="panel active" id="panel-web">
         <div class="header">
           <h1>NovaOS</h1>
-          <p>Search stays inside the window</p>
+          <p>Search • Apps • Cloud Gaming</p>
         </div>
 
         <div class="search-group">
@@ -535,10 +547,13 @@
         </div>
 
         <div class="apps-section">
-          <h2>Quick Links</h2>
+          <h2>Apps & Cloud Gaming</h2>
+          <p>Opens in the same tab</p>
           <div class="apps-grid">
             <button class="app-btn snapchat" onclick="goTo('https://web.snapchat.com/')">Snapchat</button>
             <button class="app-btn" onclick="goTo('https://www.youtube.com/')">YouTube</button>
+            <button class="app-btn gfn" onclick="goTo('https://play.geforcenow.com/')">GeForce Now</button>
+            <button class="app-btn" onclick="goTo('https://www.nvidia.com/en-us/geforce-now/')">GFN Website</button>
           </div>
         </div>
       </div>
@@ -569,7 +584,7 @@
         <div id="localResults"></div>
       </div>
 
-      <!-- RESULTS PANEL (stays inside the window) -->
+      <!-- RESULTS PANEL -->
       <div class="panel" id="panel-results">
         <div class="header">
           <h1>Search Results</h1>
@@ -635,7 +650,7 @@
       }
     }
 
-    // ========== WEB SEARCH (stays inside window) ==========
+    // ========== WEB SEARCH ==========
     let currentResultsUrl = '';
 
     function searchGoogle() {
