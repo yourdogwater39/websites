@@ -63,12 +63,9 @@
     }
 
     .desk-icon .icon-box {
-      width: 44px;
-      height: 44px;
+      width: 44px; height: 44px;
       border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       font-size: 23px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.35);
     }
@@ -81,15 +78,13 @@
       max-width: 76px;
     }
 
-    /* WINDOW */
     .window {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -53%);
-      width: 780px;
+      width: 720px;
       max-width: 96vw;
-      height: 580px;
+      height: 560px;
       max-height: 90vh;
       background: #f3f3f3;
       border-radius: 12px;
@@ -142,7 +137,6 @@
     .control.close:hover { background: #c42b1c; color: #fff; }
     .control svg { width: 10px; height: 10px; }
 
-    /* TAB BAR */
     .tab-bar {
       display: flex;
       align-items: flex-end;
@@ -202,22 +196,18 @@
 
     .tab-content {
       flex: 1;
-      overflow: hidden;
+      overflow: auto;
       background: #f3f3f3;
       display: none;
-      flex-direction: column;
     }
 
-    .tab-content.active { display: flex; }
+    .tab-content.active { display: block; }
 
-    /* HOME CONTENT */
     .home-content {
-      padding: 28px 32px;
-      overflow: auto;
-      flex: 1;
+      padding: 28px 32px 32px;
     }
 
-    .header { text-align: center; margin-bottom: 24px; }
+    .header { text-align: center; margin-bottom: 26px; }
     .header h1 { font-size: 26px; font-weight: 600; margin-bottom: 4px; }
     .header p { font-size: 13.5px; color: #605e5c; }
 
@@ -266,7 +256,12 @@
     .btn-ddg { background: #de5833; }
     .btn-ddg:hover { background: #c44d2c; }
 
-    .apps-section { margin-top: 24px; padding-top: 18px; border-top: 1px solid #e3e3e3; }
+    .apps-section {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid #e3e3e3;
+    }
+
     .apps-section h2 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
     .apps-section p { font-size: 12.5px; color: #605e5c; margin-bottom: 12px; }
 
@@ -295,113 +290,6 @@
       font-weight: 600;
     }
 
-    /* ========== BUILT-IN PROXY BROWSER ========== */
-    .proxy-chrome {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: #e8e8e8;
-      border-bottom: 1px solid #d0d0d0;
-      flex-shrink: 0;
-    }
-
-    .nav-btn {
-      width: 32px;
-      height: 32px;
-      border: none;
-      background: transparent;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #444;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .nav-btn:hover { background: rgba(0,0,0,0.08); }
-    .nav-btn:disabled { opacity: 0.35; cursor: default; }
-
-    .address-bar {
-      flex: 1;
-      height: 34px;
-      padding: 0 14px;
-      border: 1px solid #c0c0c0;
-      border-radius: 17px;
-      font-size: 13.5px;
-      font-family: inherit;
-      background: #fff;
-      outline: none;
-    }
-
-    .address-bar:focus {
-      border-color: #0078d4;
-      box-shadow: 0 0 0 1px #0078d4;
-    }
-
-    .go-btn {
-      height: 34px;
-      padding: 0 16px;
-      border: none;
-      border-radius: 17px;
-      background: #0078d4;
-      color: white;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .go-btn:hover { background: #106ebe; }
-
-    .proxy-frame-container {
-      flex: 1;
-      position: relative;
-      background: #fff;
-      overflow: hidden;
-    }
-
-    .proxy-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: none;
-    }
-
-    .proxy-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #f7f7f7;
-      color: #555;
-      text-align: center;
-      padding: 40px;
-    }
-
-    .proxy-placeholder h2 {
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #1a1a1a;
-    }
-
-    .proxy-placeholder p {
-      font-size: 14px;
-      max-width: 420px;
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-
-    .proxy-status {
-      font-size: 13px;
-      color: #0078d4;
-      margin-top: 12px;
-    }
-
-    /* TASKBAR */
     .taskbar {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -573,23 +461,18 @@
         <span class="tab-title">NovaOS Home</span>
         <div class="tab-close" onclick="event.stopPropagation(); closeTab('home')">×</div>
       </div>
-      <div class="tab" data-tab="proxy" onclick="switchTab('proxy')">
-        <span class="tab-title">Proxy Browser</span>
-        <div class="tab-close" onclick="event.stopPropagation(); closeTab('proxy')">×</div>
-      </div>
       <button class="new-tab-btn" onclick="createNewTab()" title="New Tab">+</button>
     </div>
 
-    <!-- HOME TAB -->
     <div class="tab-content active" id="tab-home">
       <div class="home-content">
         <div class="header">
           <h1>NovaOS</h1>
-          <p>Built-in Proxy • Search • Apps</p>
+          <p>Search • Apps • Same-tab browsing</p>
         </div>
 
         <div class="search-group">
-          <label>Google (opens in built-in proxy)</label>
+          <label>Google</label>
           <div class="search-row">
             <input type="text" id="google" placeholder="Search the web"
                    onkeydown="if(event.key==='Enter') searchGoogle()">
@@ -598,7 +481,7 @@
         </div>
 
         <div class="search-group">
-          <label>DuckDuckGo (opens in built-in proxy)</label>
+          <label>DuckDuckGo</label>
           <div class="search-row">
             <input type="text" id="ddg" placeholder="Search privately"
                    onkeydown="if(event.key==='Enter') searchDDG()">
@@ -607,38 +490,17 @@
         </div>
 
         <div class="apps-section">
-          <h2>Apps (open in built-in proxy)</h2>
-          <p>These load inside the Proxy Browser tab</p>
+          <h2>Apps</h2>
+          <p>Opens in the same tab</p>
           <div class="apps-grid">
-            <button class="app-btn snapchat" onclick="openInProxy('https://web.snapchat.com/')">Snapchat</button>
-            <button class="app-btn" onclick="openInProxy('https://www.youtube.com/')">YouTube</button>
+            <button class="app-btn snapchat" onclick="goTo('https://web.snapchat.com/')">Snapchat</button>
+            <button class="app-btn" onclick="goTo('https://www.youtube.com/')">YouTube</button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BUILT-IN PROXY TAB -->
-    <div class="tab-content" id="tab-proxy">
-      <div class="proxy-chrome">
-        <button class="nav-btn" id="btnBack" onclick="proxyBack()" title="Back">←</button>
-        <button class="nav-btn" onclick="proxyReload()" title="Reload">⟳</button>
-        <input class="address-bar" id="proxyAddress" placeholder="Enter URL or search..."
-               onkeydown="if(event.key==='Enter') proxyGo()">
-        <button class="go-btn" onclick="proxyGo()">Go</button>
-      </div>
-      <div class="proxy-frame-container">
-        <iframe class="proxy-frame" id="proxyFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
-        <div class="proxy-placeholder" id="proxyPlaceholder">
-          <h2>Built-in Proxy Browser</h2>
-          <p>Enter a URL above or use the search boxes on the Home tab.<br>
-             Many sites block embedding for security. When that happens you will see a message here.</p>
-          <div class="proxy-status" id="proxyStatus">Ready</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Start Menu -->
   <div class="start-menu" id="startMenu">
     <div class="start-header">Pinned</div>
     <div class="start-grid">
@@ -656,7 +518,6 @@
     </div>
   </div>
 
-  <!-- Taskbar -->
   <div class="taskbar">
     <div class="taskbar-center">
       <button class="taskbar-btn" id="startBtn" onclick="toggleStart()">
@@ -686,100 +547,27 @@
   </div>
 
   <script>
-    // ========== BUILT-IN PROXY ==========
-    let proxyHistory = [];
-    let proxyIndex = -1;
-
-    function openInProxy(url) {
-      switchTab('proxy');
-      document.getElementById('proxyAddress').value = url;
-      loadInProxy(url);
-    }
-
-    function loadInProxy(url) {
-      const frame = document.getElementById('proxyFrame');
-      const placeholder = document.getElementById('proxyPlaceholder');
-      const status = document.getElementById('proxyStatus');
-
-      if (!url.startsWith('http')) {
+    // Navigation - opens in the same tab
+    function goTo(url) {
+      if (!url) return;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = 'https://' + url;
       }
-
-      status.textContent = 'Loading ' + url + ' ...';
-      placeholder.style.display = 'flex';
-      frame.style.display = 'none';
-
-      // Try to load in iframe
-      frame.src = url;
-
-      // Update history
-      if (proxyIndex < proxyHistory.length - 1) {
-        proxyHistory = proxyHistory.slice(0, proxyIndex + 1);
-      }
-      proxyHistory.push(url);
-      proxyIndex = proxyHistory.length - 1;
-      updateNavButtons();
-
-      // Most major sites block iframe embedding.
-      // We detect load failure after a short time.
-      setTimeout(() => {
-        try {
-          // If we can access the frame it loaded (rare)
-          const doc = frame.contentDocument || frame.contentWindow.document;
-          if (doc) {
-            placeholder.style.display = 'none';
-            frame.style.display = 'block';
-            status.textContent = 'Loaded';
-          }
-        } catch (e) {
-          // Blocked by X-Frame-Options or CSP
-          status.innerHTML = `
-            This site blocks being displayed inside the built-in proxy.<br><br>
-            <button onclick="window.location.href='${url}'" 
-              style="padding:8px 16px;border:none;border-radius:6px;background:#0078d4;color:white;cursor:pointer;font-size:13px;">
-              Open in full browser instead
-            </button>
-          `;
-        }
-      }, 1800);
+      window.location.href = url;
     }
 
-    function proxyGo() {
-      const url = document.getElementById('proxyAddress').value.trim();
-      if (url) loadInProxy(url);
-    }
-
-    function proxyBack() {
-      if (proxyIndex > 0) {
-        proxyIndex--;
-        const url = proxyHistory[proxyIndex];
-        document.getElementById('proxyAddress').value = url;
-        loadInProxy(url);
-      }
-    }
-
-    function proxyReload() {
-      const url = document.getElementById('proxyAddress').value.trim();
-      if (url) loadInProxy(url);
-    }
-
-    function updateNavButtons() {
-      document.getElementById('btnBack').disabled = proxyIndex <= 0;
-    }
-
-    // Search → open in built-in proxy
     function searchGoogle() {
       const q = document.getElementById('google').value.trim();
-      if (q) openInProxy('https://www.google.com/search?q=' + encodeURIComponent(q));
+      if (q) goTo('https://www.google.com/search?q=' + encodeURIComponent(q));
     }
 
     function searchDDG() {
       const q = document.getElementById('ddg').value.trim();
-      if (q) openInProxy('https://duckduckgo.com/?q=' + encodeURIComponent(q));
+      if (q) goTo('https://duckduckgo.com/?q=' + encodeURIComponent(q));
     }
 
-    // ========== TABS ==========
-    let tabCount = 2;
+    // Tabs
+    let tabCount = 1;
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -805,10 +593,10 @@
       content.className = 'tab-content';
       content.id = 'tab-' + id;
       content.innerHTML = `
-        <div class="home-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
-          <h2 style="margin-bottom:16px;">New Tab</h2>
-          <p style="margin-bottom:20px;color:#666;">Use the Proxy Browser tab or search from Home.</p>
-          <button class="btn btn-google" onclick="switchTab('proxy')">Open Proxy Browser</button>
+        <div class="home-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding-top:60px;">
+          <h2 style="margin-bottom:12px;">New Tab</h2>
+          <p style="color:#666;margin-bottom:20px;">Use the search boxes on the Home tab.</p>
+          <button class="btn btn-google" onclick="switchTab('home')">Go to Home</button>
         </div>`;
       document.getElementById('mainWindow').appendChild(content);
       switchTab(id);
@@ -827,7 +615,6 @@
       }
     }
 
-    // ========== UI HELPERS ==========
     function updateClock() {
       const now = new Date();
       document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
