@@ -6,6 +6,7 @@
   <title>NovaOS</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
       height: 100vh;
@@ -14,117 +15,435 @@
       color: #1a1a1a;
       user-select: none;
     }
+
     .desktop {
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background: 
-        radial-gradient(ellipse 120% 80% at 20% 10%, rgba(0,132,255,0.35) 0%, transparent 50%),
-        radial-gradient(ellipse 100% 70% at 80% 90%, rgba(0,180,216,0.28) 0%, transparent 50%),
+        radial-gradient(ellipse 120% 80% at 20% 10%, rgba(0, 132, 255, 0.35) 0%, transparent 50%),
+        radial-gradient(ellipse 100% 70% at 80% 90%, rgba(0, 180, 216, 0.28) 0%, transparent 50%),
         linear-gradient(165deg, #071525 0%, #0c2a45 30%, #123a5c 60%, #184a70 100%);
+      z-index: 0;
     }
+
     .desktop-icons {
-      position: absolute; top: 28px; left: 28px;
-      display: flex; flex-direction: column; gap: 14px; z-index: 5;
+      position: absolute;
+      top: 28px;
+      left: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 5;
     }
+
     .desk-icon {
-      width: 80px; display: flex; flex-direction: column; align-items: center; gap: 7px;
-      padding: 10px 6px 8px; border-radius: 6px; cursor: default;
+      width: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 6px 8px;
+      border-radius: 6px;
+      cursor: default;
+      transition: background 0.12s;
     }
+
     .desk-icon:hover { background: rgba(255,255,255,0.14); }
+
     .desk-icon .icon-box {
-      width: 44px; height: 44px; border-radius: 9px;
-      display: flex; align-items: center; justify-content: center; font-size: 23px;
+      width: 44px;
+      height: 44px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 23px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.35);
     }
+
     .desk-icon span {
-      font-size: 12.5px; color: #fff; text-align: center;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.95); max-width: 76px;
+      font-size: 12.5px;
+      color: #fff;
+      text-align: center;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+      max-width: 76px;
     }
+
     .window {
-      position: absolute; top: 50%; left: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -53%);
-      width: 720px; max-width: 96vw; height: 560px; max-height: 90vh;
-      background: #f3f3f3; border-radius: 12px;
+      width: 780px;
+      max-width: 96vw;
+      height: 620px;
+      max-height: 92vh;
+      background: #f3f3f3;
+      border-radius: 12px;
       box-shadow: 0 0 0 1px rgba(0,0,0,0.14), 0 32px 80px rgba(0,0,0,0.45);
-      overflow: hidden; z-index: 30; display: flex; flex-direction: column;
+      overflow: hidden;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
     }
+
     .title-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      height: 36px; padding: 0 2px 0 16px; background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 36px;
+      padding: 0 2px 0 16px;
+      background: #e8e8e8;
       border-bottom: 1px solid #d0d0d0;
+      flex-shrink: 0;
     }
-    .title-left { display: flex; align-items: center; gap: 10px; }
+
+    .title-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .app-icon {
-      width: 16px; height: 16px; background: linear-gradient(135deg,#0078d4,#00b4d8);
-      border-radius: 4px; display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 10px; font-weight: 700;
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, #0078d4, #00b4d8);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
     }
-    .window-controls { display: flex; height: 100%; }
+
+    .title-text {
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+
+    .window-controls {
+      display: flex;
+      height: 100%;
+    }
+
     .control {
-      width: 46px; height: 100%; border: none; background: transparent;
-      display: flex; align-items: center; justify-content: center; color: #1a1a1a;
+      width: 46px;
+      height: 100%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1a1a1a;
+      cursor: default;
     }
+
     .control:hover { background: rgba(0,0,0,0.07); }
     .control.close:hover { background: #c42b1c; color: #fff; }
     .control svg { width: 10px; height: 10px; }
-    .content { padding: 28px 32px; flex: 1; overflow: auto; }
-    .header { text-align: center; margin-bottom: 26px; }
-    .header h1 { font-size: 26px; font-weight: 600; margin-bottom: 4px; }
-    .header p { font-size: 13.5px; color: #605e5c; }
-    .search-group { margin-bottom: 18px; }
+
+    .tab-bar {
+      display: flex;
+      align-items: flex-end;
+      height: 38px;
+      background: #e8e8e8;
+      padding: 0 8px 0 10px;
+      gap: 2px;
+      flex-shrink: 0;
+      border-bottom: 1px solid #d0d0d0;
+    }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 32px;
+      padding: 0 14px;
+      background: #dcdcdc;
+      border-radius: 8px 8px 0 0;
+      font-size: 12.5px;
+      color: #333;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .tab.active {
+      background: #f3f3f3;
+      color: #1a1a1a;
+      font-weight: 500;
+    }
+
+    .tab:not(.active):hover { background: #d0d0d0; }
+
+    .content-area {
+      flex: 1;
+      overflow: auto;
+      background: #f3f3f3;
+    }
+
+    .panel {
+      display: none;
+      padding: 24px 28px 30px;
+    }
+
+    .panel.active { display: block; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 13.5px;
+      color: #605e5c;
+    }
+
+    .search-group {
+      margin-bottom: 16px;
+    }
+
     .search-group label {
-      display: block; font-size: 13px; font-weight: 500; color: #323130; margin-bottom: 6px;
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #323130;
+      margin-bottom: 6px;
     }
-    .search-row { display: flex; gap: 8px; }
-    input[type="text"] {
-      flex: 1; height: 38px; padding: 0 14px; border: 1px solid #cfcfcf;
-      border-radius: 6px; font-size: 14px; font-family: inherit; background: #fff; outline: none;
+
+    .search-row {
+      display: flex;
+      gap: 8px;
     }
-    input[type="text"]:focus { border-color: #0078d4; box-shadow: 0 0 0 1px #0078d4; }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cfcfcf;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+      outline: none;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: #0078d4;
+      box-shadow: 0 0 0 1px #0078d4;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
     .btn {
-      height: 38px; padding: 0 18px; border: none; border-radius: 6px;
-      font-size: 13px; font-weight: 500; cursor: pointer; color: white;
+      height: 36px;
+      padding: 0 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      color: white;
+      white-space: nowrap;
     }
+
     .btn-google { background: #0078d4; }
     .btn-google:hover { background: #106ebe; }
     .btn-ddg { background: #de5833; }
     .btn-ddg:hover { background: #c44d2c; }
-    .apps-section { margin-top: 24px; padding-top: 18px; border-top: 1px solid #e3e3e3; }
-    .apps-section h2 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .apps-section p { font-size: 12.5px; color: #605e5c; margin-bottom: 12px; }
-    .apps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn-add { background: #107c10; }
+    .btn-add:hover { background: #0e6b0e; }
+    .btn-secondary {
+      background: #e5e5e5;
+      color: #333;
+    }
+    .btn-secondary:hover { background: #d5d5d5; }
+    .btn-danger {
+      background: #f0f0f0;
+      color: #c42b1c;
+      font-size: 12px;
+      height: 28px;
+      padding: 0 10px;
+    }
+
+    .apps-section {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid #e3e3e3;
+    }
+
+    .apps-section h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .apps-section p {
+      font-size: 12.5px;
+      color: #605e5c;
+      margin-bottom: 12px;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
     .app-btn {
-      display: flex; align-items: center; justify-content: center; height: 40px;
-      background: #fff; border: 1px solid #e0e0e0; border-radius: 7px;
-      color: #1a1a1a; font-size: 13.5px; font-weight: 500; cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 7px;
+      color: #1a1a1a;
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
     }
+
     .app-btn:hover { background: #f1f1f1; }
-    .app-btn.snapchat { background: #fffc00; border-color: #e6e200; color: #000; font-weight: 600; }
+    .app-btn.snapchat {
+      background: #fffc00;
+      border-color: #e6e200;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .note-form {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .note-form .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .results-info {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .result {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border-left: 4px solid #0078d4;
+    }
+
+    .result-title {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .result-body {
+      font-size: 13.5px;
+      color: #444;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .result-meta {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #888;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #888;
+      padding: 30px 10px;
+      font-size: 14px;
+    }
+
     .taskbar {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 48px;
-      background: rgba(25,25,25,0.82); backdrop-filter: blur(60px);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: rgba(25,25,25,0.82);
+      backdrop-filter: blur(60px);
       border-top: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; justify-content: center; z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
     }
+
     .taskbar-center {
-      display: flex; align-items: center; gap: 3px;
-      background: rgba(255,255,255,0.07); border-radius: 8px; padding: 3px 5px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 3px 5px;
     }
+
     .taskbar-btn {
-      width: 40px; height: 40px; border: none; background: transparent;
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      color: #fff; cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      cursor: pointer;
     }
+
     .taskbar-btn:hover { background: rgba(255,255,255,0.12); }
     .taskbar-btn.active { background: rgba(255,255,255,0.18); }
     .taskbar-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
     .taskbar-tray {
-      position: absolute; right: 12px; display: flex; align-items: center; gap: 12px;
-      color: rgba(255,255,255,0.92); font-size: 12px;
+      position: absolute;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255,255,255,0.92);
+      font-size: 12px;
     }
-    .clock { text-align: right; line-height: 1.25; }
+
+    .clock {
+      text-align: right;
+      line-height: 1.25;
+    }
   </style>
 </head>
 <body>
+
   <div class="desktop"></div>
 
   <div class="desktop-icons">
@@ -146,7 +465,7 @@
     <div class="title-bar">
       <div class="title-left">
         <div class="app-icon">N</div>
-        <span>NovaOS</span>
+        <span class="title-text">NovaOS</span>
       </div>
       <div class="window-controls">
         <button class="control"><svg viewBox="0 0 10 10"><rect y="4.5" width="10" height="1.1" fill="currentColor"/></svg></button>
@@ -155,37 +474,71 @@
       </div>
     </div>
 
-    <div class="content">
-      <div class="header">
-        <h1>NovaOS</h1>
-        <p>Google & DuckDuckGo Search</p>
-      </div>
+    <div class="tab-bar">
+      <div class="tab active" data-panel="web" onclick="switchPanel('web')">Web Search</div>
+      <div class="tab" data-panel="local" onclick="switchPanel('local')">Local Search</div>
+    </div>
 
-      <div class="search-group">
-        <label>Google</label>
-        <div class="search-row">
-          <input type="text" id="google" placeholder="Search Google..."
-                 onkeydown="if(event.key==='Enter') searchGoogle()">
-          <button class="btn btn-google" onclick="searchGoogle()">Search</button>
+    <div class="content-area">
+      <!-- WEB SEARCH PANEL -->
+      <div class="panel active" id="panel-web">
+        <div class="header">
+          <h1>NovaOS</h1>
+          <p>Google & DuckDuckGo</p>
+        </div>
+
+        <div class="search-group">
+          <label>Google</label>
+          <div class="search-row">
+            <input type="text" id="google" placeholder="Search the web..."
+                   onkeydown="if(event.key==='Enter') searchGoogle()">
+            <button class="btn btn-google" onclick="searchGoogle()">Search</button>
+          </div>
+        </div>
+
+        <div class="search-group">
+          <label>DuckDuckGo</label>
+          <div class="search-row">
+            <input type="text" id="ddg" placeholder="Search privately..."
+                   onkeydown="if(event.key==='Enter') searchDDG()">
+            <button class="btn btn-ddg" onclick="searchDDG()">Search</button>
+          </div>
+        </div>
+
+        <div class="apps-section">
+          <h2>Quick Links</h2>
+          <p>Opens in the same tab</p>
+          <div class="apps-grid">
+            <button class="app-btn snapchat" onclick="goTo('https://web.snapchat.com/')">Snapchat</button>
+            <button class="app-btn" onclick="goTo('https://www.youtube.com/')">YouTube</button>
+          </div>
         </div>
       </div>
 
-      <div class="search-group">
-        <label>DuckDuckGo</label>
-        <div class="search-row">
-          <input type="text" id="ddg" placeholder="Search DuckDuckGo..."
-                 onkeydown="if(event.key==='Enter') searchDDG()">
-          <button class="btn btn-ddg" onclick="searchDDG()">Search</button>
+      <!-- LOCAL SEARCH PANEL -->
+      <div class="panel" id="panel-local">
+        <div class="header">
+          <h1>Local Search</h1>
+          <p>Your notes • Works offline</p>
         </div>
-      </div>
 
-      <div class="apps-section">
-        <h2>Quick Links</h2>
-        <p>Opens in the same tab</p>
-        <div class="apps-grid">
-          <button class="app-btn snapchat" onclick="goTo('https://web.snapchat.com/')">Snapchat</button>
-          <button class="app-btn" onclick="goTo('https://www.youtube.com/')">YouTube</button>
+        <div class="note-form">
+          <label style="font-size:13px;font-weight:500;margin-bottom:6px;display:block;">Add a note</label>
+          <input type="text" id="noteTitle" placeholder="Title (optional)">
+          <textarea id="noteBody" placeholder="Write your note here..." style="margin-top:8px;"></textarea>
+          <div class="row">
+            <button class="btn btn-add" onclick="addNote()">Add Note</button>
+            <button class="btn btn-secondary" onclick="clearForm()">Clear</button>
+          </div>
         </div>
+
+        <div class="search-group">
+          <label>Search your notes</label>
+          <input type="text" id="localSearch" placeholder="Type to search..." oninput="localSearch()">
+        </div>
+
+        <div class="results-info" id="localStats"></div>
+        <div id="localResults"></div>
       </div>
     </div>
   </div>
@@ -205,6 +558,46 @@
   </div>
 
   <script>
+    // ========== SAFE STORAGE (fixes the SecurityError) ==========
+    const memoryStore = {}; // fallback when localStorage is blocked
+
+    function canUseLocalStorage() {
+      try {
+        const key = '__test__';
+        localStorage.setItem(key, '1');
+        localStorage.removeItem(key);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    const useLocalStorage = canUseLocalStorage();
+
+    function loadNotes() {
+      if (useLocalStorage) {
+        try {
+          return JSON.parse(localStorage.getItem('novaNotes') || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
+      return memoryStore.notes || [];
+    }
+
+    function saveNotes(notes) {
+      if (useLocalStorage) {
+        try {
+          localStorage.setItem('novaNotes', JSON.stringify(notes));
+        } catch (e) {
+          // ignore
+        }
+      } else {
+        memoryStore.notes = notes;
+      }
+    }
+
+    // ========== WEB SEARCH ==========
     function goTo(url) {
       if (!url.startsWith('http')) url = 'https://' + url;
       window.location.href = url;
@@ -220,9 +613,102 @@
       if (q) goTo('https://duckduckgo.com/?q=' + encodeURIComponent(q));
     }
 
+    // ========== LOCAL SEARCH ==========
+    let notes = loadNotes();
+
+    function addNote() {
+      const title = document.getElementById('noteTitle').value.trim();
+      const body = document.getElementById('noteBody').value.trim();
+      if (!title && !body) {
+        alert('Please write something first');
+        return;
+      }
+      notes.unshift({
+        id: Date.now(),
+        title: title || 'Untitled',
+        body: body,
+        created: new Date().toISOString()
+      });
+      saveNotes(notes);
+      clearForm();
+      localSearch();
+    }
+
+    function clearForm() {
+      document.getElementById('noteTitle').value = '';
+      document.getElementById('noteBody').value = '';
+    }
+
+    function deleteNote(id) {
+      if (!confirm('Delete this note?')) return;
+      notes = notes.filter(n => n.id !== id);
+      saveNotes(notes);
+      localSearch();
+    }
+
+    function localSearch() {
+      const query = document.getElementById('localSearch').value.trim().toLowerCase();
+      const resultsEl = document.getElementById('localResults');
+      const statsEl = document.getElementById('localStats');
+
+      let matches = notes;
+      if (query) {
+        matches = notes.filter(n =>
+          (n.title + ' ' + n.body).toLowerCase().includes(query)
+        );
+      }
+
+      statsEl.textContent = query
+        ? `${matches.length} result${matches.length !== 1 ? 's' : ''} for "${query}"`
+        : `${notes.length} note${notes.length !== 1 ? 's' : ''} total`;
+
+      if (matches.length === 0) {
+        resultsEl.innerHTML = `<div class="empty">${query ? 'No matching notes' : 'No notes yet — add one above'}</div>`;
+        return;
+      }
+
+      resultsEl.innerHTML = matches.map(n => {
+        const date = new Date(n.created).toLocaleString();
+        return `
+          <div class="result">
+            <div class="result-title">${highlight(n.title, query)}</div>
+            <div class="result-body">${highlight(n.body, query) || '<em>No content</em>'}</div>
+            <div class="result-meta">
+              <span>${date}</span>
+              <button class="btn-danger" onclick="deleteNote(${n.id})">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function highlight(text, query) {
+      if (!query) return escapeHtml(text);
+      const regex = new RegExp('(' + escapeRegex(query) + ')', 'gi');
+      return escapeHtml(text).replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function escapeRegex(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // ========== UI ==========
+    function switchPanel(name) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelector(`.tab[data-panel="${name}"]`).classList.add('active');
+      document.getElementById('panel-' + name).classList.add('active');
+      if (name === 'local') localSearch();
+    }
+
     function openWindow() {
       document.getElementById('mainWindow').style.display = 'flex';
     }
+
     function closeWindow() {
       document.getElementById('mainWindow').style.display = 'none';
     }
@@ -234,6 +720,9 @@
     }
     updateClock();
     setInterval(updateClock, 1000);
+
+    // Start
+    localSearch();
   </script>
 </body>
 </html>
